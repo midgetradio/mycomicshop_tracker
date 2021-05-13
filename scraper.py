@@ -4,29 +4,51 @@ import requests
 import json
 
 # Methods
-url = ["https://www.mycomicshop.com/search?TID=95961"]
+# url = ["https://www.mycomicshop.com/search?TID=95961"]
+# singleIssueURL = 'https://www.mycomicshop.com/search?iid=8481991'
 
-singleIssueURL = 'https://www.mycomicshop.com/search?iid=8481991'
+baseURL_singleIssue = "https://www.mycomicshop.com/search?iid="
+baseURL_series = "https://www.mycomicshop.com/search?tid="
+mcs_id = "8481991"
 
-page = requests.get(singleIssueURL)
-page_soup = BeautifulSoup(page.content, "html.parser")
+def buildURL(id, baseURL):
+    return baseURL + id
+
+def getPageContent(url):
+    page = requests.get(url)
+    page_soup = BeautifulSoup(page.content, "html.parser")
+    return page_soup
+
+def parse_grade(grade_unparsed):
+    grade = "No Grade"
+    if(len(str(grade_unparsed)) > 0):
+        grade = str(grade_unparsed).replace("\n", "")
+    return grade
 
 #TODO: pass the MCS IID to a function to call this method for single issue parsing, pass the VOL ID for entire volume parsing
 def parse_single_issue(singleIssueHTML):
-    f = open("page.html", "w")
-    f.write(str(singleIssueHTML))
 
+    # Get the issue number and title
     issue_number_title = singleIssueHTML.find(class_ = "othercolleft")
     title = issue_number_title.a.string
     issue_number = issue_number_title.strong.string
 
+    # Get the publisher and date published
     publisher_content = singleIssueHTML.find(class_ = "othercolright").find_all("a")
     date_published = publisher_content[0].string
     publisher = publisher_content[1].string
 
+    # Get the description
     description_content = singleIssueHTML.find(class_ = "tabcontents")
     description = "No Description" if description_content.p is None else description_content.p.string
 
+    # Get the image url
+    img_url = singleIssueHTML.find(class_ = "fancyboxthis")['href']
+
+    # Get the mcs id
+    mcs_id = singleIssueHTML.find(class_ = "fancyboxthis")['id']
+    
+    # Get the prices/grades
     price_list = []
     grade_list = []
 
@@ -37,20 +59,53 @@ def parse_single_issue(singleIssueHTML):
         if(price_grade != None):
             price = price_grade.a.contents[2]
             grade_unparsed = price_grade_item.find(class_ = "hasscan").contents[0]
-            grade = str(grade_unparsed).replace("\n", "") #TODO: Create separate function to parse grade, check length of grade string, if 0, set to "No grade"
+            grade = parse_grade(grade_unparsed)
             price_list.append(price)
             grade_list.append(grade)
 
+    issue = Issue.buildIssue(issue_number, date_published, description, img_url, mcs_id, grade_list, price_list, title, publisher)
 
-    print(title)
-    print(issue_number)
-    print(date_published)
-    print(publisher)
-    print(description)
-    print(grade_list)
-    print(price_list)
+    return issue
 
-parse_single_issue(page_soup)
+
+urlTest = "https://www.mycomicshop.com/search?TID=95961"
+page = getPageContent(urlTest)
+
+# f = open("page.html", "w")
+# f.write(str(page))
+
+remaining_page_numbers = page.find(class_ = "paginate")
+remaining_pages = remaining_page_numbers.find_all("a")
+rp = []
+
+for remaining in remaining_pages:
+    if(remaining.string == "Next"):
+        continue
+    rp.append(urlTest + "&pgi=" + remaining.string)
+
+print(rp)
+
+issue_soup_list = page.find_all(class_ = "issue")
+issue = parse_single_issue(issue_soup_list[49])
+# print(issue.issue_string())
+
+
+# url = buildURL(mcs_id, baseURL_singleIssue)
+# page = getPageContent(url)
+# issue = parse_single_issue(page)
+
+# print(issue.issue_string())
+
+
+
+
+
+
+
+
+
+
+
 
 def CreateURLList(urls):
     print("Grabbing urls...")
