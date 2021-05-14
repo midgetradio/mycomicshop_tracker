@@ -20,7 +20,7 @@ class Issue(object):
         #kind = 1
         return cls(iss_num=issue_num, pub_date=publication_date, des=description, i_url=img_url, mcs=mcs_id, l1 = grade_list, l2=price_list, voltitle=volume_title, pub=publisher)
 
-    def issue_string(self):
+    def __str__(self):
         return "Issue Number:\t\t" + str(self.issue_num) + "\n" + \
                "Volume Title:\t\t" + self.volume_title + "\n" + \
                "Publisher:\t\t" + self.publisher + "\n" + \
