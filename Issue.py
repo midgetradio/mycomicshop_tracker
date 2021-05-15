@@ -26,7 +26,7 @@ class Issue(object):
                "Publisher:\t\t" + self.publisher + "\n" + \
                "Publication Date:\t" + self.publication_date + "\n" + \
                "Image URL:\t\t" + self.img_url + "\n" + \
-               "Description:\t\t" + self.description + \
+               "Description:\t\t" + self.description + "\n" + \
                "MCS_ID:\t\t\t" + str(self.mcs_id) + "\n" + \
                "Grade List:\t\t" + str(self.grade_list) + "\n" + \
                "Price List:\t\t" + str(self.price_list)
