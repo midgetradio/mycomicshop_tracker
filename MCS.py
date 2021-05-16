@@ -26,13 +26,21 @@ def main():
     volume_urls = []
     singles_urls = []
     issues_list = []
+    volume_ids = []
+    single_ids = []
 
     # read from the json file
-    f = open("issue_tracking.json")
-    data = json.load(f)
+    json_file = open("issue_tracking.json")
+    data = json.load(json_file)
 
-    volume_ids = data['volumes']
-    single_ids = data['singles']
+    volumes = data['volumes']
+    singles = data['singles']
+
+    for volume in volumes.values():
+        volume_ids.append(volume)
+
+    for single in singles.values():
+        single_ids.append(single)
 
     # if single => process single, if volume => process volume
     for id in volume_ids:
