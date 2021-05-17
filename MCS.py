@@ -30,7 +30,7 @@ def main():
     single_ids = []
 
     # read from the json file
-    json_file = open("issue_tracking.json")
+    json_file = open("./json/issue_tracking.json")
     data = json.load(json_file)
 
     volumes = data['volumes']
@@ -56,6 +56,7 @@ def main():
         page = scraper.getPageContent(singles_urls[x])
         issue = scraper.parse_single_issue(page)
         issues_list.append(issue)
+        print(issue)
         print("processed " + issues_list[-1].volume_title + "...")
 
     # process volumes
@@ -65,5 +66,11 @@ def main():
 
     # print
     print(issues_list[-1])
+
+    # to json file
+    issues_json = json.dumps([issue.dump() for issue in issues_list])
+
+    x = open("./json/output.json", "w")
+    x.write(issues_json)
 
 main()

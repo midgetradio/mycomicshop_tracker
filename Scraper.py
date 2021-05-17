@@ -19,11 +19,17 @@ class Scraper():
         page_soup = BeautifulSoup(page.content, "html.parser")
         return page_soup
 
+    def parse_price(self, price_unparsed):
+        price = "No price"
+        if(len(str(price_unparsed)) > 0):
+            price = str(price_unparsed).replace("\n", "")
+        return price.strip()
+
     def parse_grade(self, grade_unparsed):
         grade = "No Grade"
         if(len(str(grade_unparsed)) > 0):
             grade = str(grade_unparsed).replace("\n", "")
-        return grade
+        return grade.strip()
 
     def parse_single_issue(self, singleIssueHTML):
         # Get the issue number and title
@@ -32,7 +38,6 @@ class Scraper():
         title = "No title" if issue_number_title.a is None else issue_number_title.a.string
 
         issue_number = "No number" if issue_number_title.strong.string is None else issue_number_title.strong.string
-        
 
         # Get the publisher and date published
         publisher_content = singleIssueHTML.find(class_ = "othercolright").find_all("a")
@@ -60,8 +65,9 @@ class Scraper():
         for price_grade_item in price_grade_list:
             price_grade = price_grade_item.find(class_ = "addcart")
             if(price_grade != None):
-                price = price_grade.a.contents[2]
-                grade_unparsed = price_grade_item.find(class_ = "hasscan").contents[0]
+                price_unparsed = price_grade_item.find(class_ = "hasscan").contents[0]
+                grade_unparsed = price_grade.a.contents[2]
+                price = self.parse_price(price_unparsed)
                 grade = self.parse_grade(grade_unparsed)
                 price_list.append(price)
                 grade_list.append(grade)

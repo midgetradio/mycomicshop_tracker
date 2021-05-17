@@ -30,3 +30,14 @@ class Issue(object):
                "MCS_ID:\t\t\t" + str(self.mcs_id) + "\n" + \
                "Grade List:\t\t" + str(self.grade_list) + "\n" + \
                "Price List:\t\t" + str(self.price_list)
+
+    def dump(self):
+        return {    "Title": self.volume_title,
+                    "Issue Number": self.issue_num,
+                    "Publisher": self.publisher,
+                    "Publication Date": self.publication_date,
+                    "Image URL": self.img_url,
+                    "Description": self.description,
+                    "MCS_ID": self.mcs_id,
+                    "Grade List": self.grade_list,
+                    "Price List": self.price_list   }
