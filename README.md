@@ -14,7 +14,7 @@ A python application that scrapes current prices for any user-specified comics a
 1. Get the issue id from the mycomicshop.com website, or run this application on the volume id.  Each issue object that is returned will contain that issue's specific id.
 2. Add that issue id to issue_tracking.json in the "singles" section.
 
-### Run the program after updating issue_tracking.json:
+## Run the program after updating issue_tracking.json
 `python MCS.py`
 
 The resulting json containing the issue information will be sent to the output.json file.
